@@ -7,11 +7,13 @@ import random
 import time
 
 global choices
-global lolas
-global lola
+
 
 choices = []
-lolas = []
+
+lolas1=[2000]
+lolas2=[200]
+SetTempo =[lolas1,lolas2]
 
 
 myWindow = visual.Window(monitor="testMonitor", units="cm", fullscr=True) # Especificaciones de la pantalla principal llamada myWindow
@@ -54,19 +56,12 @@ def instrucciones(): # Funcion que genera la primera pantalla,
 	click()
 
 ##### Alternatives
-magnitude_adjusted = 2000
-time_fixed_small = 2
-magnitude_fixed_large = 4000
-time_fixed_large = 4
+magnitude_adjusted = [2000,200]
+time_fixed_small = [2,1]
+magnitude_fixed_large = [4000,400]
+time_fixed_large = [4,2]
 
 
-#Grupo short delays
-small_reward = visual.TextStim(myWindow,text= str(magnitude_adjusted) +' pesos en '+ str(time_fixed_small) + ' semana',
-		height=tamano_letra, 
-		color=col_alter,colorSpace='rgb255')
-large_reward = visual.TextStim(myWindow,text= str(magnitude_fixed_large) +' pesos en '+ str(time_fixed_large) + ' semanas',
-		height=tamano_letra, 
-		color=col_alter, colorSpace="rgb255")
 
 
 
@@ -101,7 +96,7 @@ def seleccionletra(cual_a,cual_b):
 	choices.append(eleccion.getRating())
 
 
-def ajuste(ajustada,fija):
+def ajuste(ajustada,ajuste2,fija,conjunto):
 	global choices
 	txt_pregunta = visual.TextStim(myWindow,text=u'¿Cuál alternativa prefieres?', #texto permanente
 		height=1, 
@@ -116,9 +111,9 @@ def ajuste(ajustada,fija):
 		marker='hover', size=2, stretch=0.8) 
 	global lola
 	if choices[-1] == 'A': #choices[-1] get last list item 
-		lola = ajustada- ((magnitude_fixed_large - ajustada)/2)
+		lola = ajustada - abs((ajuste2 - ajustada)/2)
 
-		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small) + ' semana',
+		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
 		height=tamano_letra, 
 		color=col_alter,colorSpace='rgb255')
 
@@ -133,9 +128,9 @@ def ajuste(ajustada,fija):
 			eleccion.draw()
 			myWindow.flip()
 	else:
-		lola = ajustada + ((magnitude_fixed_large - ajustada)/2)
+		lola = ajustada + abs((ajuste2-ajustada)/2)
 
-		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small) + ' semana',
+		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
 		height=tamano_letra, 
 		color=col_alter,colorSpace='rgb255')
 
@@ -149,8 +144,7 @@ def ajuste(ajustada,fija):
 			fija.draw()
 			eleccion.draw()
 			myWindow.flip()
-			
-    	lolas.append(lola)
+    	conjunto.append(lola)
 	choices.append(eleccion.getRating())
 
 
@@ -160,26 +154,51 @@ def ajuste(ajustada,fija):
 ####################### Aqui pones todas las funciones y los ciclos asi como quieres que sucedan
 instrucciones()
 myWindow.update()
-seleccionletra(small_reward,large_reward)
-myWindow.update()
-ajuste(magnitude_adjusted,large_reward)
+for j in (range(len(magnitude_adjusted))):
+	small_reward = visual.TextStim(myWindow,text= str(magnitude_adjusted[j]) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
+		height=tamano_letra, 
+		color=col_alter,colorSpace='rgb255')
+	large_reward = visual.TextStim(myWindow,text= str(magnitude_fixed_large[j]) +' pesos en '+ str(time_fixed_large[j]) + ' semanas',
+		height=tamano_letra, 
+		color=col_alter, colorSpace="rgb255")
 
-for i in range(7):
+	seleccionletra(small_reward,large_reward)
 	myWindow.update()
-	ajuste(lola,large_reward)
+	ajuste(magnitude_adjusted[j],magnitude_fixed_large[j],large_reward,SetTempo[j])
+	myWindow.update()
+	ajuste(lola,magnitude_adjusted[j],large_reward,SetTempo[j])
+
+
+	for i in range(4):
+		myWindow.update()
+		ajuste(lola,SetTempo[j][1+i],large_reward,SetTempo[j])
+
+	conjunto = visual.TextStim(myWindow,text= 'siguiente conjunto',
+	height=tamano_letra,color=col_alter,colorSpace='rgb255')
+	conjunto.draw()
+	myWindow.update()
+	click()
+
+cantidades=lolas1+lolas2
 
 
 print " --- "
 print "Update list"
-print lolas
+print lolas1
+print lolas2
+print cantidades
 print choices
 
-
-# for i in range(3): #ciclo que permite que se repitan los ensayos con diferentes valores
-# 	myMouse=event.Mouse(win=myWindow,newPos=(0,-3))	
+ensayos=range(13)
 
 
-
-
+salvadatos=('sujeto_adju_tiempo.csv')
+with open(salvadatos,'wb') as csvfile:
+	ensayo=csv.writer(csvfile,delimiter=',')
+	ensayo.writerow(['trial','smaller_money','choices'])
+	for i in range(13):
+		ensayo.writerow([ensayos[i]+1,
+			cantidades[i],
+			choices[i]])
 
 
