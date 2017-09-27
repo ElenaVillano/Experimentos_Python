@@ -7,13 +7,30 @@ import random
 import time
 
 global choices
-
-
 choices = []
 
-lolas1=[2000]
-lolas2=[200]
-SetTempo =[lolas1,lolas2]
+set1=[200]
+set2=[200]
+set3=[200]
+set4=[200]
+set5=[200]
+set6=[200]
+set7=[200]
+set8=[200]
+set9=[200]
+set10=[200]
+set11=[2000]
+set12=[2000]
+set13=[2000]
+set14=[2000]
+set15=[2000]
+set16=[2000]
+set17=[2000]
+set18=[2000]
+set19=[2000]
+set20=[2000]
+
+allSets =[set1,set2,set3,set4,set5,set6,set7,set8,set9,set10,set11,set12,set13,set14,set15,set16,set17,set18,set19,set20]
 
 
 myWindow = visual.Window(monitor="testMonitor", units="cm", fullscr=True) # Especificaciones de la pantalla principal llamada myWindow
@@ -56,10 +73,10 @@ def instrucciones(): # Funcion que genera la primera pantalla,
 	click()
 
 ##### Alternatives
-magnitude_adjusted = [2000,200]
-time_fixed_small = [2,1]
-magnitude_fixed_large = [4000,400]
-time_fixed_large = [4,2]
+magnitude_adjusted    = [200,200,200,200,200,200,200,200,200,200,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000]
+time_fixed_small      = [  0,  2,  4,  0, 12, 14, 16, 12,  6,  0,   0,   2,   4,   0,  12,  14,  16,  12,   6,   0]
+magnitude_fixed_large = [400,400,400,400,400,400,400,400,400,400,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000]
+time_fixed_large      = [  2,  4,  6,  6, 14, 16, 18, 18, 12, 18,   2,   4,   6,   6,  14,  16,  18,  18,  12,  18]
 
 
 
@@ -113,7 +130,7 @@ def ajuste(ajustada,ajuste2,fija,conjunto):
 	if choices[-1] == 'A': #choices[-1] get last list item 
 		lola = ajustada - abs((ajuste2 - ajustada)/2)
 
-		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
+		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
 		height=tamano_letra, 
 		color=col_alter,colorSpace='rgb255')
 
@@ -130,7 +147,7 @@ def ajuste(ajustada,ajuste2,fija,conjunto):
 	else:
 		lola = ajustada + abs((ajuste2-ajustada)/2)
 
-		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
+		small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
 		height=tamano_letra, 
 		color=col_alter,colorSpace='rgb255')
 
@@ -155,7 +172,7 @@ def ajuste(ajustada,ajuste2,fija,conjunto):
 instrucciones()
 myWindow.update()
 for j in (range(len(magnitude_adjusted))):
-	small_reward = visual.TextStim(myWindow,text= str(magnitude_adjusted[j]) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
+	small_reward = visual.TextStim(myWindow,text= str(magnitude_adjusted[j]) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
 		height=tamano_letra, 
 		color=col_alter,colorSpace='rgb255')
 	large_reward = visual.TextStim(myWindow,text= str(magnitude_fixed_large[j]) +' pesos en '+ str(time_fixed_large[j]) + ' semanas',
@@ -164,14 +181,14 @@ for j in (range(len(magnitude_adjusted))):
 
 	seleccionletra(small_reward,large_reward)
 	myWindow.update()
-	ajuste(magnitude_adjusted[j],magnitude_fixed_large[j],large_reward,SetTempo[j])
+	ajuste(magnitude_adjusted[j],magnitude_fixed_large[j],large_reward,allSets[j])
 	myWindow.update()
-	ajuste(lola,magnitude_adjusted[j],large_reward,SetTempo[j])
+	ajuste(lola,magnitude_adjusted[j],large_reward,allSets[j])
 
 
 	for i in range(4):
 		myWindow.update()
-		ajuste(lola,SetTempo[j][1+i],large_reward,SetTempo[j])
+		ajuste(lola,allSets[j][1+i],large_reward,allSets[j])
 
 	conjunto = visual.TextStim(myWindow,text= 'siguiente conjunto',
 	height=tamano_letra,color=col_alter,colorSpace='rgb255')
@@ -179,24 +196,22 @@ for j in (range(len(magnitude_adjusted))):
 	myWindow.update()
 	click()
 
-cantidades=lolas1+lolas2
+cantidades=set1+set2+set3+set4+set5+set6+set7+set8+set9+set10+set11+set12+set13+set14+set15+set16+set17+set18+set19+set20
 
 
 print " --- "
 print "Update list"
-print lolas1
-print lolas2
 print cantidades
 print choices
 
-ensayos=range(13)
+ensayos=range(len(cantidades))
 
 
 salvadatos=('sujeto_adju_tiempo.csv')
 with open(salvadatos,'wb') as csvfile:
 	ensayo=csv.writer(csvfile,delimiter=',')
 	ensayo.writerow(['trial','smaller_money','choices'])
-	for i in range(13):
+	for i in range(len(cantidades)):
 		ensayo.writerow([ensayos[i]+1,
 			cantidades[i],
 			choices[i]])
