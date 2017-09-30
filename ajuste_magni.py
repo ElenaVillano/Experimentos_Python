@@ -9,28 +9,34 @@ import time
 global choices
 choices = []
 
-set1=[200]
-set2=[200]
-set3=[200]
-set4=[200]
-set5=[200]
-set6=[200]
-set7=[200]
-set8=[200]
-set9=[200]
-set10=[200]
-set11=[2000]
-set12=[2000]
-set13=[2000]
-set14=[2000]
-set15=[2000]
-set16=[2000]
-set17=[2000]
-set18=[2000]
-set19=[2000]
-set20=[2000]
+que1 =[2000]
+que2 =[2000]
+que3 =[2000]
+que4 =[2000]
+que5 =[2000]
+que6 =[2000]
+que7 =[2000]
+que8 =[2000]
+que9 =[2000]
+que10=[2000]
+que11=[2000]
+que12=[2000]
+que13=[2000]
+que14=[2000]
+que15=[2000]
+que16=[2000]
+que17=[200]
+que18=[200]
+que19=[200]
+que20=[200]
+que21=[200]
+que22=[200]
+que23=[200]
+que24=[200]
+que25=[200]
+que26=[200]
 
-allSets =[set1,set2,set3,set4,set5,set6,set7,set8,set9,set10,set11,set12,set13,set14,set15,set16,set17,set18,set19,set20]
+allques =[que1,que2,que3,que4,que5,que6,que7,que8,que9,que10,que11,que12,que13,que14,que15,que16,que17,que18,que19,que20,que21,que22,que23,que24,que25,que26]
 
 
 myWindow = visual.Window(monitor="testMonitor", units="cm", fullscr=True) # Especificaciones de la pantalla principal llamada myWindow
@@ -72,11 +78,11 @@ def instrucciones(): # Funcion que genera la primera pantalla,
 	myWindow.update() # todas estos textos se mostraron en una pantalla al mismo tiempo
 	click()
 
-##### Alternatives
-magnitude_adjusted    = [200,200,200,200,200,200,200,200,200,200,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000]
-time_fixed_small      = [  0,  2,  4,  0, 12, 14, 16, 12,  6,  0,   0,   2,   4,   0,  12,  14,  16,  12,   6,   0]
-magnitude_fixed_large = [400,400,400,400,400,400,400,400,400,400,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000]
-time_fixed_large      = [  2,  4,  6,  6, 14, 16, 18, 18, 12, 18,   2,   4,   6,   6,  14,  16,  18,  18,  12,  18]
+##### Preguntas        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17  18  19  20  21  22  23  24  25  26
+magnitude_adjusted    = [2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,200,200,200,200,200,200,200,200,200,200]
+time_fixed_small      = [   2,   4,   6,   2,   4,   2,  14,  16,  18,  14,  16,  14,   8,   2,   8,   2,  2,  4,  6,  2, 14, 16, 18, 14, 8 ,  2]
+magnitude_fixed_large = [4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,400,400,400,400,400,400,400,400,400,400]
+time_fixed_large      = [   4,   6,   8,   6,   8,   8,  16,  18,  20,  18,  20,  20,  14,  14,  20,  20,  4,  6,  8,  8, 16, 18, 20, 20, 14, 20]
 
 
 
@@ -181,14 +187,14 @@ for j in (range(len(magnitude_adjusted))):
 
 	seleccionletra(small_reward,large_reward)
 	myWindow.update()
-	ajuste(magnitude_adjusted[j],magnitude_fixed_large[j],large_reward,allSets[j])
+	ajuste(magnitude_adjusted[j],magnitude_fixed_large[j],large_reward,allques[j])
 	myWindow.update()
-	ajuste(lola,magnitude_adjusted[j],large_reward,allSets[j])
+	ajuste(lola,magnitude_adjusted[j],large_reward,allques[j])
 
 
 	for i in range(4):
 		myWindow.update()
-		ajuste(lola,allSets[j][1+i],large_reward,allSets[j])
+		ajuste(lola,allques[j][1+i],large_reward,allques[j])
 
 	conjunto = visual.TextStim(myWindow,text= 'siguiente conjunto',
 	height=tamano_letra,color=col_alter,colorSpace='rgb255')
@@ -196,7 +202,7 @@ for j in (range(len(magnitude_adjusted))):
 	myWindow.update()
 	click()
 
-cantidades=set1+set2+set3+set4+set5+set6+set7+set8+set9+set10+set11+set12+set13+set14+set15+set16+set17+set18+set19+set20
+cantidades=que1+que2+que3+que4+que5+que6+que7+que8+que9+que10+que11+que12+que13+que14+que15+que16+que17+que18+que19+que20+que21+que22+que23+que24+que25+que26
 
 
 print " --- "

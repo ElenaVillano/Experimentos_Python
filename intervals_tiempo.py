@@ -9,7 +9,7 @@ import time
 #sujeto= raw_input('Participante: ')
 sujeto= 1
 
-myWindow = visual.Window(monitor="testMonitor", units="cm", fullscr=False)
+myWindow = visual.Window(monitor="testMonitor", units="cm", fullscr=True)
 myWindow.setColor([255,255,255], colorSpace="rgb255")
 myWindow.update()
 myMouse = event.Mouse()

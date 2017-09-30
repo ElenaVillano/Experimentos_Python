@@ -3,7 +3,7 @@ rm(list = ls())
 
 
 
-data_tiempo <- read.csv('~/Documents/Experimentos_Python/sujeto_adju_tiempo.csv')
+data_tiempo <- read.csv('~/Documents/Experimentos_Python/sujeto_adju_tiempo2.csv')
 
 choices <- data_tiempo$choices
 acuta <- array(dim=c(1,nrow(data_tiempo)))
