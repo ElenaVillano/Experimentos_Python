@@ -312,7 +312,7 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 		if choices[-1] == 'A':                                       # ([-1] get last list item) Si choices en el ensayo anterior es igual a A entonces
 			lola = ajustada - abs((ajuste2 - ajustada)/2)            # lola se ajusta ante el valor absoluto
 
-			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
+			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
 			height=tamano_letra, color=col_alter, colorSpace='rgb255')
 
 			while eleccion.noResponse:
@@ -379,7 +379,7 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 		if choices[-1] == 'A': 
 			lola = ajustada - abs((ajuste2 - ajustada)/2)
 
-			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semana',
+			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
 			height=tamano_letra, color=col_alter, colorSpace='rgb255')
 
 			while eleccion.noResponse:
