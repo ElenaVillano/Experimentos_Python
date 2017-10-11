@@ -15,6 +15,9 @@ from psychopy import visual, core, event
 import csv
 import random
 import time
+import numpy as np
+
+sujeto = raw_input('Participante: ')
 
 """Especificaciones generales de la pantalla"""
 
@@ -23,7 +26,6 @@ myWindow.setColor([255,255,255], colorSpace="rgb255")                      # Col
 myWindow.update()                                                          # Actualizacion de la ventana
 myMouse = event.Mouse(myWindow)                                            # Registra un evento del raton dentro de la pantalla (myWindow)
 
-
 """Especificaciones generales de variables 
 que se utilizaran a lo largo  del experimento"""
 
@@ -31,53 +33,61 @@ global choices                                                             # Se 
 choices = []                                                               # Lista vacia de choices
 tamano_letra = 1.2                                                         # Tamano letra de opciones
 col_alter=(120,120,120)                                                    # Color de letra
-yes = []                                                                   # Lista a llenar
+reaction_time = []                                                         # Lista de tiempos de reaccion vacia 
+seleccion = []                                                             # Lista de seleccion de 0 (RSS) y 1 (RLL)
+money_left=[]                                                              # Lista de la cantidad que aparece en la izquierda
+time_left=[]                                                               # Lista del tiempo que aparece en la izquierda
+money_right = []                                                           # Lista de la cantidad que aparece en la derecha                              
+time_right = []                                                            # Lista del tiempo que aparece en la izquierda
+right_or_left = []                                                         # Lista de right == A o left == B 
+cantidades_ajustadas = []                                                  # Lista de cantidades ajustadas
+conjunto_id = []                                                           # Lista de identificacion de preguntas
+dates = []                                                                  # Lista de fechas
 
 """Especificaciones de las preguntas con las que comienzas cada conjunto."""
 
-# Listas con solo un primer valor
-que1 =[2000]
-que2 =[2000]
-que3 =[2000]
-que4 =[2000]
-que5 =[2000]
-que6 =[2000]
-que7 =[2000]
-que8 =[2000]
-que9 =[2000]
-que10=[2000]
-que11=[2000]
-que12=[2000]
-que13=[2000]
-que14=[2000]
-que15=[2000]
-que16=[2000]
-que17=[200]
-que18=[200]
-que19=[200]
-que20=[200]
-que21=[200]
-que22=[200]
-que23=[200]
-que24=[200]
-que25=[200]
-que26=[200]
+numero_sets = 26
+numero_ajustes = 7
 
-allques =[que1,que2,que3,que4,que5,que6,que7,que8,que9,que10,que11,que12,que13,que14,que15,que16,que17,que18,que19,que20,que21,que22,que23,que24,que25,que26]
-
-
-##### Preguntas            1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17  18  19  20  21  22  23  24  25  26
-magnitude_adjusted    = [2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,200,200,200,200,200,200,200,200,200,200]
-time_fixed_small      = [   2,   4,   6,   2,   4,   2,  14,  16,  18,  14,  16,  14,   8,   2,   8,   2,  2,  4,  6,  2, 14, 16, 18, 14, 8 ,  2]
-magnitude_fixed_large = [4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,4000,400,400,400,400,400,400,400,400,400,400]
-time_fixed_large      = [   4,   6,   8,   6,   8,   8,  16,  18,  20,  18,  20,  20,  14,  14,  20,  20,  4,  6,  8,  8, 16, 18, 20, 20, 14, 20]
+# Cada lista de lista es un conjunto de alternativas que se ajustara en el procedimiento su consistencia es la siguiente:
+# [[lista a llenar con los valores ajustados],(atributos fijos de ese conjunto de preguntas), numero de conjunto]
+set1 =[[2000],(2000,4000, 2, 4), 1]
+set2 =[[2000],(2000,4000, 4, 6), 2]
+set3 =[[2000],(2000,4000, 6, 8), 3]
+set4 =[[2000],(2000,4000, 2, 6), 4]
+set5 =[[2000],(2000,4000, 4, 8), 5]
+set6 =[[2000],(2000,4000, 2, 8), 6]
+set7 =[[2000],(2000,4000,14,16), 7]
+set8 =[[2000],(2000,4000,16,18), 8]
+set9 =[[2000],(2000,4000,18,20), 9]
+set10=[[2000],(2000,4000,14,18),10]
+set11=[[2000],(2000,4000,16,20),11]
+set12=[[2000],(2000,4000,14,20),12]
+set13=[[2000],(2000,4000, 8,14),13]
+set14=[[2000],(2000,4000, 2,14),14]
+set15=[[2000],(2000,4000, 8,20),15]
+set16=[[2000],(2000,4000, 2,20),16]
+set17=[[ 200],( 200, 400, 2, 4),17]
+set18=[[ 200],( 200, 400, 4, 6),18]
+set19=[[ 200],( 200, 400, 6, 8),19]
+set20=[[ 200],( 200, 400, 2, 8),20]
+set21=[[ 200],( 200, 400,14,16),21]
+set22=[[ 200],( 200, 400,16,18),22]
+set23=[[ 200],( 200, 400,18,20),23]
+set24=[[ 200],( 200, 400,14,20),24]
+set25=[[ 200],( 200, 400, 8,14),25]
+set26=[[ 200],( 200, 400, 2,20),26]
 
 
+# Todas las listas en una sola lista
+Sets =[set1,set2,set3,set4,set5,set6,set7,set8,set9,set10,set11,set12,set13,set14,set15,set16,set17,set18,set19,set20,set21,set22,set23,set24,set25,set26]
+# Las hacemos random
+allSets = random.sample(Sets,len(Sets))
 
 
-"""Funciones que se utilizaran en el experimento"""
+"""Funciones set se utilizaran en el experimento"""
 
-def click():                                             # Funcion que detecta un click en la pantalla
+def click():                                             # Funcion set detecta un click en la pantalla
 	keys = event.getKeys()                                                                      
 	for k in keys:
 		if k == "escape":
@@ -90,8 +100,7 @@ def click():                                             # Funcion que detecta u
 			clickdetected = True
 
 
-
-def instrucciones():                                     # Funcion que genera las instrucciones del experimento
+def instrucciones():                                     # Funcion set genera las instrucciones del experimento
 	# Primera pantalla (primeras instrucciones)
 	txt_instruc1 = visual.TextStim(myWindow,text="INSTRUCCIONES:",
 		height=1.5, 
@@ -165,14 +174,14 @@ def instrucciones():                                     # Funcion que genera la
 	click()
 
 	# Cuarta pantalla (retroalimentacion)
-	txt_instruc6 = visual.TextStim(myWindow,text=u"Después de que hayas elegido tu alternativa dando click en la letra, la pantalla te mostrará cuál fue la alternativa que elegiste. Para continuar con la siguiente pregunta tendrás que dar click en el centro de la pantalla. \n \n \nEn esta siguiente pregunta se te presentará otro par de alternativas que pueden contener diferentes cantidades de dinero y/o demoras, y deberás elegir de entre ellas de nuevo.",
+	txt_instruc6 = visual.TextStim(myWindow,text=u"Después de que hayas elegido tu alternativa dando click en la letra, la pantalla te mostrará cuál fue la alternativa que elegiste. Para continuar con la siguiente pregunta tendrás que dar click en el centro de la pantalla. \n \nEn esta siguiente pregunta se te presentará otro par de alternativas que pueden contener diferentes cantidades de dinero y/o demoras, y deberás elegir de entre ellas de nuevo.",
 		height=1, 
 		color=col_alter, colorSpace="rgb255", 
 		pos=(0,5),alignHoriz='center',wrapWidth = 40)
-	txt_instruc6_2 = visual.TextStim(myWindow,text=u"Toma en cuenta que el dinero de las demoras más cortas cambia de pregunta a pregunta mientras que el dinero de las demoras largas, así como las demoras de las dos alternativas, cambian cada cierto número de preguntas.",
+	txt_instruc6_2 = visual.TextStim(myWindow,text=u"Toma en cuenta dos cosas: \n \n1. El dinero de la alternativa menos demorada siempre cambia de pregunta a pregunta.\n \n2. Cada cierto número de preguntas el dinero de la alternativa más demorada, así como las demoras de ambas alternativas serán diferentes, estos cambios se indicarán con la leyenda: Da click para continuar con el siguiente conjunto. ",
 		height=1, 
 		color=col_alter, colorSpace="rgb255", 
-		pos=(0,-2),alignHoriz='center',wrapWidth = 40)
+		pos=(0,-3),alignHoriz='center',wrapWidth = 40)
 	txt_instruc6.draw()
 	txt_instruc6_2.draw()
 	myWindow.update()
@@ -198,8 +207,6 @@ def instrucciones():                                     # Funcion que genera la
 	click()
 
 
-
-
 def seleccionletra(cual_a,cual_b):                       # Funcion que regista la primera eleccion de cada pregunta fija
 
 	# Eleccion entre A o B
@@ -214,7 +221,7 @@ def seleccionletra(cual_a,cual_b):                       # Funcion que regista l
 		pos=(0,1))	
 
 	eleccion = visual.RatingScale(myWindow, choices=['A','B'],       # Regista y genera A o B en variable eleccion 
-		marker='hover', size=2, stretch=0.8)                         # minTime= restriccion temporal 
+		marker='hover', size=2, stretch=0.8)                         # minTime = restriccion temporal 
 
 	global y                                                         # Genera 0 o 1 para acomodar posicion izquierda derecha
 	y = random.randint(0,1)
@@ -249,6 +256,8 @@ def seleccionletra(cual_a,cual_b):                       # Funcion que regista l
 	# Dependiente de la posicion, dibuja el texto de retroalimentacion 
 	if y==1: # 1 RSS / RLL
 		if choice_trial=='A':
+			x=0
+			seleccion.append(x)
 			cual_a.pos=(0,2)
 			cual_a.draw()
 			elegiste_txt.draw()
@@ -256,15 +265,20 @@ def seleccionletra(cual_a,cual_b):                       # Funcion que regista l
 			myWindow.flip()
 			click()
 		else:
+			x=1
+			seleccion.append(x)
 			cual_b.pos=(0,2)
 			cual_b.draw()
 			elegiste_txt.draw()
 			sig_txt.draw()
 			myWindow.flip()
 			click()
+			
 
 	else: # 0 = RLL / RSS
 		if choice_trial=='A':
+			x=1
+			seleccion.append(x)
 			cual_b.pos=(0,2)
 			cual_b.draw()
 			elegiste_txt.draw()
@@ -272,15 +286,17 @@ def seleccionletra(cual_a,cual_b):                       # Funcion que regista l
 			myWindow.flip()
 			click()
 		else:
+			x=0
+			seleccion.append(x)
 			cual_a.pos=(0,2)
 			cual_a.draw()
 			elegiste_txt.draw()
 			sig_txt.draw()
 			myWindow.flip()
-			click()
+			click()                                       
 	
 	choices.append(eleccion.getRating())                             # Variable que guarda todas las elecciones en choices
-
+	reaction_time.append(eleccion.getRT())
 
 
 def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion que hace el ajuste una vez que ya se eligio
@@ -312,7 +328,7 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 		if choices[-1] == 'A':                                       # ([-1] get last list item) Si choices en el ensayo anterior es igual a A entonces
 			lola = ajustada - abs((ajuste2 - ajustada)/2)            # lola se ajusta ante el valor absoluto
 
-			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
+			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(allSets[j][1][2]) + ' semanas',
 			height=tamano_letra, color=col_alter, colorSpace='rgb255')
 
 			while eleccion.noResponse:
@@ -327,7 +343,10 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 
 			choice_trial = eleccion.getRating()
 
-			if choice_trial == 'A':                                  # Retro alimentacion 
+
+			if choice_trial == 'A': 
+				x = 0
+				seleccion.append(x)                                 # Retro alimentacion 
 				small_reward_ad.pos=(0,2)
 				small_reward_ad.draw()
 				elegiste_txt.draw()
@@ -335,17 +354,20 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 				myWindow.flip()
 				click()
 			else:
+				x = 1
+				seleccion.append(x) 
 				fija.pos=(0,2)
 				fija.draw()
 				elegiste_txt.draw()
 				sig_txt.draw()
 				myWindow.flip()
 				click()
+			
 
 		else:
 			lola = ajustada + abs((ajuste2-ajustada)/2)              # De cualquier otra manera 
 
-			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
+			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(allSets[j][1][2]) + ' semanas',
 			height=tamano_letra, color=col_alter, colorSpace='rgb255')
 
 			while eleccion.noResponse:
@@ -360,7 +382,10 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 				
 			choice_trial = eleccion.getRating()
 
+
 			if choice_trial == 'A':
+				x = 0
+				seleccion.append(x)     
 				small_reward_ad.pos=(0,2)
 				small_reward_ad.draw()
 				elegiste_txt.draw()
@@ -368,18 +393,21 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 				myWindow.flip()
 				click()
 			else:
+				x = 1
+				seleccion.append(x)     
 				fija.pos=(0,2)
 				fija.draw()
 				elegiste_txt.draw()
 				sig_txt.draw()
 				myWindow.flip()
 				click()
+			
 
 	else: # 1 RLL / RSS
 		if choices[-1] == 'A': 
-			lola = ajustada - abs((ajuste2 - ajustada)/2)
+			lola = ajustada + abs((ajuste2 - ajustada)/2)
 
-			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
+			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(allSets[j][1][2]) + ' semanas',
 			height=tamano_letra, color=col_alter, colorSpace='rgb255')
 
 			while eleccion.noResponse:
@@ -395,6 +423,8 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 			choice_trial = eleccion.getRating()
 
 			if choice_trial == 'A':
+				x = 1
+				seleccion.append(x)     
 				fija.pos=(0,2)
 				fija.draw()
 				elegiste_txt.draw()
@@ -402,6 +432,8 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 				myWindow.flip()
 				click()
 			else:
+				x = 0
+				seleccion.append(x)     
 				small_reward_ad.pos=(0,2)
 				small_reward_ad.draw()
 				elegiste_txt.draw()
@@ -410,9 +442,10 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 				click()
 
 		else:
-			lola = ajustada + abs((ajuste2-ajustada)/2)
 
-			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
+			lola = ajustada - abs((ajuste2-ajustada)/2)
+
+			small_reward_ad = visual.TextStim(myWindow,text= str(lola) +' pesos en '+ str(allSets[j][1][2]) + ' semanas',
 			height=tamano_letra, color=col_alter, colorSpace='rgb255')
 
 			while eleccion.noResponse:
@@ -428,6 +461,8 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 			choice_trial = eleccion.getRating()
 
 			if choice_trial == 'A':
+				x = 1
+				seleccion.append(x)     
 				fija.pos=(0,2)
 				fija.draw()
 				elegiste_txt.draw()
@@ -435,19 +470,18 @@ def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion q
 				myWindow.flip()
 				click()
 			else:
+				x = 0
+				seleccion.append(x)     
 				small_reward_ad.pos=(0,2)
 				small_reward_ad.draw()
 				elegiste_txt.draw()
 				sig_txt.draw()
 				myWindow.flip()
 				click()
-
-
-
     	conjunto.append(lola)
-	
 
 	choices.append(eleccion.getRating())
+	reaction_time.append(eleccion.getRT())
 
 
 """Como se desarrollara el experimento
@@ -455,49 +489,102 @@ Aqui pones todas las funciones y ciclos como quieres que sucedan a lo largo del 
 
 instrucciones()
 myWindow.update()
-for j in (range(len(magnitude_adjusted))):
-	small_reward = visual.TextStim(myWindow,text= str(magnitude_adjusted[j]) +' pesos en '+ str(time_fixed_small[j]) + ' semanas',
+for j in range(numero_sets):
+	# Creas dentro del ciclo las primeras preguntas del conjunto
+	small_reward = visual.TextStim(myWindow,text= str(allSets[j][1][0]) +' pesos en '+ str(allSets[j][1][2]) + ' semanas',
 		height=tamano_letra, 
 		color=col_alter,colorSpace='rgb255')
-	large_reward = visual.TextStim(myWindow,text= str(magnitude_fixed_large[j]) +' pesos en '+ str(time_fixed_large[j]) + ' semanas',
+	large_reward = visual.TextStim(myWindow,text= str(allSets[j][1][1]) +' pesos en '+ str(allSets[j][1][3]) + ' semanas',
 		height=tamano_letra, 
 		color=col_alter, colorSpace="rgb255")
-
-	seleccionletra(small_reward,large_reward)
+    
+    # Seleccionas la primera letra
+	seleccionletra(small_reward,large_reward)                                   
+	dates.append(time.ctime())
 	myWindow.update()
-	ajuste(magnitude_adjusted[j],magnitude_fixed_large[j],large_reward,allSets[j])
+
+	# Una vez que elegiste entre A o B, se hace un ajuste dependiendo de cual opcion elegiste en el ensayo anterior
+	ajuste(allSets[j][1][0],allSets[j][1][1],large_reward,allSets[j][0])   
+	dates.append(time.ctime())
 	myWindow.update()
-	ajuste(lola,magnitude_adjusted[j],large_reward,allSets[j])
 
+	# En funcion de la segunda eleccion del conjunto, se hace el ajuste ya sobre la variable de lola que en el ensayo anterior ya tuvo un valor
+	ajuste(lola,allSets[j][1][0],large_reward,allSets[j][0])                   
+	dates.append(time.ctime())
 
-	for i in range(4):
+	# Se hace un nuevo ciclo que repite el ajuste las veces que quieras, toma en cuenta que las veces que repites aqui, es mas las que agregues aqui
+	for i in range(2):
 		myWindow.update()
-		ajuste(lola,allSets[j][1+i],large_reward,allSets[j])
+		ajuste(lola,allSets[j][0][1+i],large_reward,allSets[j][0]) 
+		dates.append(time.ctime())
+	
+	# Los siguientes argumentos son para el registro de datos
+		
+	cantidades_ajustadas.extend(allSets[j][0])                                  # Registro de datos de las cantidades ajustadas 
+	conjunto_id.extend(np.repeat(allSets[j][2],numero_ajustes))                 # Registro de la identificacion del conjunto
+	dates.extend(np.repeat(time.ctime(),numero_ajustes))
 
-	conjunto = visual.TextStim(myWindow,text= 'siguiente conjunto',
-	height=tamano_letra,color=col_alter,colorSpace='rgb255')
-	conjunto.draw()
+
+	# Condicional para el correcto registro de datos. Cual opcion aparecion en la izquierda == A y cual en la derecha == B
+	if y == 1:                                                                  
+		money_left.extend(allSets[j][0])
+		time_left.extend(np.repeat(allSets[j][1][2],numero_ajustes))
+		money_right.extend(np.repeat(allSets[j][1][1],numero_ajustes))
+		time_right.extend(np.repeat(allSets[j][1][3],numero_ajustes))
+	else:
+		money_left.extend(np.repeat(allSets[j][1][1],numero_ajustes))
+		time_left.extend(np.repeat(allSets[j][1][3],numero_ajustes))
+		money_right.extend(allSets[j][0])
+		time_right.extend(np.repeat(allSets[j][1][2],numero_ajustes))
+
+	# Texto para cuando se termina un conjunto 
+	conjunto_txt = visual.TextStim(myWindow,text= 'Da click para continuar con el siguiente conjunto.',
+	height=tamano_letra,color=col_alter,colorSpace='rgb255', italic=True,wrapWidth=40)
+	conjunto_txt.draw()
 	myWindow.update()
 	click()
 
-cantidades=que1+que2+que3+que4+que5+que6+que7+que8+que9+que10+que11+que12+que13+que14+que15+que16+que17+que18+que19+que20+que21+que22+que23+que24+que25+que26
+# Texto de termino
+termino = visual.TextStim(myWindow,text="El experimento ha terminado...",
+	height=1.1, 
+	color=col_alter, colorSpace="rgb255", 
+	pos=(0,3),alignHoriz='center')
+termino1 = visual.TextStim(myWindow,text=u"Gracias por tu participación.",
+	height=1.2, 
+	color=col_alter, colorSpace="rgb255", 
+	pos=(0,-4),alignHoriz='center')
+
+termino.draw()
+termino1.draw()
+myWindow.update()
+click()
 
 
 print " --- "
-print "Update list"
-print cantidades
+print "This is the general data of the participant"
+print cantidades_ajustadas
 print choices
+print seleccion
 
-ensayos=range(len(cantidades))
 
+ensayos=range(numero_ajustes*numero_sets)
 
-salvadatos=('sujeto_adju_tiempo.csv')
+"""Registro de datos"""
+salvadatos=('sujeto_'+str(sujeto)+'_tiempo_ajuste.csv')
 with open(salvadatos,'wb') as csvfile:
 	ensayo=csv.writer(csvfile,delimiter=',')
-	ensayo.writerow(['trial','smaller_money','choices'])
-	for i in range(len(cantidades)):
+	ensayo.writerow(['trial','money_A_left','time_A_left','money_B_right','time_B_right','choice','adjusted_magnitude','biggerchosen','conjunto_id','reaction_time','date'])
+	for i in range(len(ensayos)):
 		ensayo.writerow([ensayos[i]+1,
-			cantidades[i],
-			choices[i]])
+			money_left[i],
+			time_left[i],
+			money_right[i],
+			time_right[i],
+			choices[i],
+			cantidades_ajustadas[i],
+			seleccion[i],
+			conjunto_id[i],
+			reaction_time[i],
+			dates[i]])
 
 

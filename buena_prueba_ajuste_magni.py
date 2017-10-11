@@ -17,6 +17,8 @@ import random
 import time
 import numpy as np
 
+sujeto = raw_input('Participante: ')
+
 """Especificaciones generales de la pantalla"""
 
 myWindow = visual.Window(monitor="testMonitor", units="cm", fullscr=True)  # Especificaciones de la pantalla principal llamada myWindow
@@ -33,37 +35,34 @@ tamano_letra = 1.2                                                         # Tam
 col_alter=(120,120,120)                                                    # Color de letra
 reaction_time = []                                                         # Lista de tiempos de reaccion vacia 
 seleccion = []                                                             # Lista de seleccion de 0 (RSS) y 1 (RLL)
-money_left=[]
-time_left=[]
-money_right = []
-time_right = []
-right_or_left = []
-cantidades_ajustadas=[]
-
+money_left=[]                                                              # Lista de la cantidad que aparece en la izquierda
+time_left=[]                                                               # Lista del tiempo que aparece en la izquierda
+money_right = []                                                           # Lista de la cantidad que aparece en la derecha                              
+time_right = []                                                            # Lista del tiempo que aparece en la izquierda
+right_or_left = []                                                         # Lista de right == A o left == B 
+cantidades_ajustadas = []                                                  # Lista de cantidades ajustadas
+conjunto_id = []                                                           # Lista de identificacion de preguntas
+dates = []                                                                  # Lista de fechas
 
 
 """Especificaciones de las preguntas con las que comienzas cada conjunto."""
 
-numero_sets = 6
-numero_ajustes = 5
-# Listas con solo un primer valor
-set1=[[ 200],( 200, 400, 3, 9)]
-set2=[[ 200],( 200, 400,12,36)]
-set3=[[ 200],( 200, 400,23,29)]
-set4=[[2000],(2000,4000, 3, 9)]
-set5=[[2000],(2000,4000,12,36)]
-set6=[[2000],(2000,4000,23,29)]
+numero_sets = 6                                                            # Numero de conjuntos de preguntas
+numero_ajustes = 5                                                         # Numero de veces que se ajusta la cantidad pequena
+
+# Cada lista de lista es un conjunto de alternativas que se ajustara en el procedimiento su consistencia es la siguiente:
+# [[lista a llenar con los valores ajustados],(atributos fijos de ese conjunto de preguntas), numero de conjunto]
+set1=[[ 200],( 200, 400, 3, 9),1]
+set2=[[ 200],( 200, 400,12,36),2]
+set3=[[ 200],( 200, 400,23,29),3]
+set4=[[2000],(2000,4000, 3, 9),4]
+set5=[[2000],(2000,4000,12,36),5]
+set6=[[2000],(2000,4000,23,29),6]
 
 # Todas las listas en una sola lista
 Sets = [set1,set2,set3,set4,set5,set6]
 # Las hacemos random
 allSets = random.sample(Sets,len(Sets))
-
-
-# Espericiaciones de cada pregunta a ajustar
-#                        set1,set2,set3,set4,set5,set6
-
-
 
 """Funciones que se utilizaran en el experimento"""
 
@@ -279,10 +278,6 @@ def seleccionletra(cual_a,cual_b):                       # Funcion que regista l
 	reaction_time.append(eleccion.getRT())
 
 
-
-
-
-
 def ajuste(ajustada,ajuste2,fija,conjunto):                          # Funcion que hace el ajuste una vez que ya se eligio
 	global choices
 	global lola
@@ -474,26 +469,43 @@ Aqui pones todas las funciones y ciclos como quieres que sucedan a lo largo del 
 instrucciones()
 myWindow.update()
 for j in range(numero_sets):
+	# Creas dentro del ciclo las primeras preguntas del conjunto
 	small_reward = visual.TextStim(myWindow,text= str(allSets[j][1][0]) +' pesos en '+ str(allSets[j][1][2]) + ' semanas',
 		height=tamano_letra, 
 		color=col_alter,colorSpace='rgb255')
 	large_reward = visual.TextStim(myWindow,text= str(allSets[j][1][1]) +' pesos en '+ str(allSets[j][1][3]) + ' semanas',
 		height=tamano_letra, 
 		color=col_alter, colorSpace="rgb255")
-
-	seleccionletra(small_reward,large_reward)                                   # Primera eleccion entre A y B
+    
+    # Seleccionas la primera letra
+	seleccionletra(small_reward,large_reward)                                   
+	dates.append(time.ctime())
 	myWindow.update()
-	ajuste(allSets[j][1][0],allSets[j][1][1],large_reward,allSets[j][0])        # Se hace el ajuste en funcion de la eleccion entre la cantidad grande y pequena
-	myWindow.update()
-	ajuste(lola,allSets[j][1][0],large_reward,allSets[j][0])                    # 
 
+	# Una vez que elegiste entre A o B, se hace un ajuste dependiendo de cual opcion elegiste en el ensayo anterior
+	ajuste(allSets[j][1][0],allSets[j][1][1],large_reward,allSets[j][0])   
+	dates.append(time.ctime())
+	myWindow.update()
+
+	# En funcion de la segunda eleccion del conjunto, se hace el ajuste ya sobre la variable de lola que en el ensayo anterior ya tuvo un valor
+	ajuste(lola,allSets[j][1][0],large_reward,allSets[j][0])                   
+	dates.append(time.ctime())
+
+	# Se hace un nuevo ciclo que repite el ajuste las veces que quieras, toma en cuenta que las veces que repites aqui, es mas las que agregues aqui
 	for i in range(2):
 		myWindow.update()
 		ajuste(lola,allSets[j][0][1+i],large_reward,allSets[j][0]) 
+		dates.append(time.ctime())
+	
+	# Los siguientes argumentos son para el registro de datos
+		
+	cantidades_ajustadas.extend(allSets[j][0])                                  # Registro de datos de las cantidades ajustadas 
+	conjunto_id.extend(np.repeat(allSets[j][2],numero_ajustes))                 # Registro de la identificacion del conjunto
+	dates.extend(np.repeat(time.ctime(),numero_ajustes))
 
-	cantidades_ajustadas.extend(allSets[j][0])
 
-	if y == 1:                                                                   # Condicional para el registro de datos
+	# Condicional para el correcto registro de datos. Cual opcion aparecion en la izquierda == A y cual en la derecha == B
+	if y == 1:                                                                  
 		money_left.extend(allSets[j][0])
 		time_left.extend(np.repeat(allSets[j][1][2],numero_ajustes))
 		money_right.extend(np.repeat(allSets[j][1][1],numero_ajustes))
@@ -504,16 +516,14 @@ for j in range(numero_sets):
 		money_right.extend(allSets[j][0])
 		time_right.extend(np.repeat(allSets[j][1][2],numero_ajustes))
 
-
-
-
+	# Texto para cuando se termina un conjunto 
 	conjunto_txt = visual.TextStim(myWindow,text= 'Da click para continuar con el siguiente conjunto.',
 	height=tamano_letra,color=col_alter,colorSpace='rgb255', italic=True,wrapWidth=40)
 	conjunto_txt.draw()
 	myWindow.update()
 	click()
 
-
+# Texto de termino
 termino = visual.TextStim(myWindow,text="El experimento ha terminado...",
 	height=1.1, 
 	color=col_alter, colorSpace="rgb255", 
@@ -529,24 +539,21 @@ myWindow.update()
 click()
 
 
-
-
-
 print " --- "
-print "Update list"
-print money_left
+print "This is the general data of the participant"
+print cantidades_ajustadas
 print choices
 print seleccion
 
 
 ensayos=range(numero_ajustes*numero_sets)
 
-"""Registro de datos """
-salvadatos=('sujeto_adju_tiempo.csv')
+"""Registro de datos"""
+salvadatos=('sujeto_'+str(sujeto)+'_tiempo_ajuste.csv')
 with open(salvadatos,'wb') as csvfile:
 	ensayo=csv.writer(csvfile,delimiter=',')
-	ensayo.writerow(['trial','money_A_left','time_A_left','money_B_right','time_B_right','choice','adjusted_magnitude','biggerchosen','reaction_time'])
-	for i in range(30):
+	ensayo.writerow(['trial','money_A_left','time_A_left','money_B_right','time_B_right','choice','adjusted_magnitude','biggerchosen','conjunto_id','reaction_time','date'])
+	for i in range(len(ensayos)):
 		ensayo.writerow([ensayos[i]+1,
 			money_left[i],
 			time_left[i],
@@ -555,6 +562,8 @@ with open(salvadatos,'wb') as csvfile:
 			choices[i],
 			cantidades_ajustadas[i],
 			seleccion[i],
-			reaction_time[i]])
+			conjunto_id[i],
+			reaction_time[i],
+			dates[i]])
 
 
